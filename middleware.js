@@ -2,8 +2,7 @@ const {pool, secretJWT} = require("./helpers")
 const jwt = require('jsonwebtoken')
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers['autorization']
-
+    const token = req.header('Access')
     if (!token){
         res.status(401)
         return res.json({ message: "Вы не авторизованы" })
@@ -17,7 +16,7 @@ const verifyToken = (req, res, next) => {
 }
 
 const checkAccess = async (req, res, next) => {
-    if (req.user.id != req.body.id && req.role!=2){
+    if (req.user.id != req.body.userId && req.user.role!=2){
         return res.status(403).json({message: "Не достаточно прав"})
     }
 
@@ -27,11 +26,41 @@ const checkAccess = async (req, res, next) => {
         let result = await client.query(`SELECT "userId", 
                                                 "isActive" 
                                          FROM users 
-                                         WHERE userId = $1`, [req.user.id])
+                                         WHERE "userId" = $1`, [req.user.id])
         if (result.rows.length > 0 && result.rows[0].isActive){
             next()
         }
-        return res.status(403).json({ message: "Аккаунт заблокирован или удален"})
+        else{
+            return res.status(403).json({ message: "Аккаунт заблокирован или удален"})
+        }
+    }
+    catch(err){
+        next(err)
+    }
+    finally{
+        client.release()
+        console.log("Release client")
+    }
+}
+const checkAdminAccess = async (req, res, next) => {
+    if (req.user.role!=2){
+        return res.status(403).json({message: "Не достаточно прав"})
+    }
+
+    const client = await pool.connect()
+    
+    try{
+        let result = await client.query(`SELECT "userId", 
+                                                "isActive",
+                                                "userRole"
+                                         FROM users 
+                                         WHERE "userId" = $1`, [req.user.id])
+        if (result.rows.length > 0 && result.rows[0].isActive && result.rows[0].userRole == 2){
+            next()
+        }
+        else{
+            return res.status(403).json({ message: "Не достаточно прав"})
+        }
     }
     catch(err){
         next(err)
@@ -43,6 +72,7 @@ const checkAccess = async (req, res, next) => {
 }
 
 module.exports = {
-    verifyToken : verifyToken,
-    checkAccess : checkAccess
+    verifyToken      : verifyToken,
+    checkAccess      : checkAccess,
+    checkAdminAccess : checkAdminAccess,
 }
