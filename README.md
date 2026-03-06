@@ -11,7 +11,7 @@
 ####         userEmail: 'string',
 ####         userPassword: 'string',
 ####         birthDate: 'string' ('YYYY-MM-DD'),
-####         userRole : 'integer' (1, 2) } 
+####         userRole : 'string' ('user', 'admin') } 
 ### /user/login - авторизация пользователя 
 #### body: { userEmail: 'string',
 ####         userPassword: 'string',} 
