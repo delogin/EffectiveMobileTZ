@@ -10,7 +10,7 @@
 ####         LastName: 'string',
 ####         userEmail: 'string',
 ####         userPassword: 'string',
-####         birthDate: 'string',
+####         birthDate: 'string' ('YYYY-MM-DD'),
 ####         userRole : 'integer' (1, 2) } 
 ### /user/login - авторизация пользователя 
 #### body: { userEmail: 'string',
