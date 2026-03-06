@@ -5,11 +5,11 @@ const verifyToken = (req, res, next) => {
     const token = req.header('Access')
     if (!token){
         res.status(401)
-        return res.json({ message: "Вы не авторизованы" })
+        return res.json({ message: "You are not autorized" })
     }
 
     jwt.verify(token, secretJWT, (err, decoded) => {
-        if (err) return res.status(403).json({ message: "Токен недействителен" });
+        if (err) return res.status(403).json({ message: "Invalid token" });
         req.user = decoded; 
         next();
     });
@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
 
 const checkAccess = async (req, res, next) => {
     if (req.user.id != req.body.userId && req.user.role!=2){
-        return res.status(403).json({message: "Не достаточно прав"})
+        return res.status(403).json({message: "Access denied"})
     }
 
     const client = await pool.connect()
@@ -31,7 +31,7 @@ const checkAccess = async (req, res, next) => {
             next()
         }
         else{
-            return res.status(403).json({ message: "Аккаунт заблокирован или удален"})
+            return res.status(403).json({ message: "Account is in block or delete"})
         }
     }
     catch(err){
@@ -44,7 +44,7 @@ const checkAccess = async (req, res, next) => {
 }
 const checkAdminAccess = async (req, res, next) => {
     if (req.user.role!=2){
-        return res.status(403).json({message: "Не достаточно прав"})
+        return res.status(403).json({message: "Access denied"})
     }
 
     const client = await pool.connect()
@@ -59,7 +59,7 @@ const checkAdminAccess = async (req, res, next) => {
             next()
         }
         else{
-            return res.status(403).json({ message: "Не достаточно прав"})
+            return res.status(403).json({ message: "Access denied"})
         }
     }
     catch(err){
