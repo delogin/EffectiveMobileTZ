@@ -1,6 +1,7 @@
 exports.shorthands = undefined;
 
 exports.up = pgm => {
+    pgm.createType('user_role', ['admin', 'user']);
     pgm.createTable('users', {
         userId:           {
             type:       'bigserial',
@@ -36,10 +37,10 @@ exports.up = pgm => {
             notNull: true
         },
         userRole:{
-            type:  'smallint',
+            type:  'user_role',
             notNull: true,
-            comment: '1 - user, 2 - admin',
-            default: 1
+            comment: 'роль (admin, user)',
+            default: 'user'
         },
         isActive:{
             type: 'boolean', 

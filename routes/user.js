@@ -16,7 +16,7 @@ router.post('/register',
                         userEmail: {type : 'string'},
                         userPassword: {type : 'string'},
                         birthDate: {type : 'string'},
-                        userRole : {type : 'integer', enum: [1, 2]}
+                        userRole : {type : 'string', enum: ['user', 'admin']}
                     },
                     required: ["FirstName", "MiddleName" , "LastName", "userEmail", "userPassword", "birthDate", "userRole"]
                 }

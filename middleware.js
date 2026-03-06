@@ -16,7 +16,7 @@ const verifyToken = (req, res, next) => {
 }
 
 const checkAccess = async (req, res, next) => {
-    if (req.user.id != req.body.userId && req.user.role!=2){
+    if (req.user.id != req.body.userId && req.user.role!="admin"){
         return res.status(403).json({message: "Access denied"})
     }
 
@@ -43,7 +43,7 @@ const checkAccess = async (req, res, next) => {
     }
 }
 const checkAdminAccess = async (req, res, next) => {
-    if (req.user.role!=2){
+    if (req.user.role!="admin"){
         return res.status(403).json({message: "Access denied"})
     }
 
@@ -55,7 +55,7 @@ const checkAdminAccess = async (req, res, next) => {
                                                 "userRole"
                                          FROM users 
                                          WHERE "userId" = $1`, [req.user.id])
-        if (result.rows.length > 0 && result.rows[0].isActive && result.rows[0].userRole == 2){
+        if (result.rows.length > 0 && result.rows[0].isActive && result.rows[0].userRole == "admin"){
             next()
         }
         else{
